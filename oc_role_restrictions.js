@@ -148,9 +148,22 @@
   let previousTab = "none";
 
   function classifyOcRoleInfluence(ocName, roleName, successChance) {
-    const roleData = ocRoleInfluence[ocName]?.find((r) => r.role === roleName);
+    const ocInfo = ocRoleInfluence[ocName];
+    const roleData = ocInfo?.find((r) => r.role === roleName);
     const influence = roleData ? roleData.influence : 0;
     const lower = roleData ? roleData.lower : 70;
+    let upper = lower + 10;
+
+    const roleLowers = ocInfo
+      .map((role) => {
+        return role.lower;
+      })
+      .sort();
+
+    // If our role is a low influence role, set the upper bound to the next highest lower bound
+    if (roleLowers[0] == lower) {
+      upper = roleLowers[1];
+    }
 
     let thresholds;
 
@@ -159,10 +172,10 @@
     else thresholds = influenceThresholds.low;
 
     if (successChance >= thresholds.good)
-      return { evaluation: "good", influence, lower };
+      return { evaluation: "good", influence, lower, upper };
     if (successChance >= thresholds.ok)
-      return { evaluation: "ok", influence, lower };
-    return { evaluation: "bad", influence, lower };
+      return { evaluation: "ok", influence, lower, upper };
+    return { evaluation: "bad", influence, lower, upper };
   }
 
   function processCrime(wrapper) {
@@ -194,7 +207,7 @@
 
       const slotHeader = roleEl.closest("button.slotHeader___K2BS_");
       if (slotHeader) {
-        if (chance > evaluation.lower + 10) {
+        if (chance > evaluation.upper) {
           //slotHeader.style.backgroundColor = "#ca6f1e";
         } else if (chance > evaluation.lower) {
           slotHeader.style.backgroundColor = "#239b56";
