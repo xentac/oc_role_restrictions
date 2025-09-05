@@ -5,21 +5,16 @@
 // @description  Highlight role restrictions and best roles in OC 2.0 (modified copy of "Torn OC Role Evaluator"). Well paired with https://greasyfork.org/en/scripts/526834-oc-success-chance-2-0.
 // @author       underko[3362751], xentac[3354782]
 // @match        https://www.torn.com/factions.php*
-// @grant        none
+// @grant        GM_xmlhttpRequest
 // @require      https://update.greasyfork.org/scripts/502635/1422102/waitForKeyElements-CoeJoder-fork.js
+// @connect      raw.githubusercontent.com
 // @license      MIT
 // ==/UserScript==
 
 (function () {
   "use strict";
 
-  const influenceThresholds = {
-    high: { good: 75, ok: 60 },
-    medium: { good: 60, ok: 45 },
-    low: { good: 40, ok: 30 },
-  };
-
-  const ocRoleInfluence = {
+  let ocRoleInfluence = {
     "Pet Project": [
       { role: "Kidnapper", influence: 41.14, lower: 70 },
       { role: "Muscle", influence: 26.83, lower: 70 },
@@ -147,7 +142,7 @@
   let crimeData = {};
   let previousTab = "none";
 
-  function classifyOcRoleInfluence(ocName, roleName, successChance) {
+  function classifyOcRoleInfluence(ocName, roleName) {
     const ocInfo = ocRoleInfluence[ocName];
     const roleData = ocInfo?.find((r) => r.role === roleName);
     const influence = roleData ? roleData.influence : 0;
@@ -165,17 +160,64 @@
       upper = roleLowers[1];
     }
 
-    let thresholds;
+    return { influence, lower, upper };
+  }
 
-    if (influence >= 30) thresholds = influenceThresholds.high;
-    else if (influence >= 10) thresholds = influenceThresholds.medium;
-    else thresholds = influenceThresholds.low;
+  function getFactionId() {
+    let factionId = "";
+    try {
+      document
+        .querySelector(".forum-thread")
+        .href.split("#")[1]
+        .split("&")
+        .forEach((elem) => {
+          if (elem[0] == "a") {
+            factionId = elem.split("=")[1];
+          }
+        });
+    } catch (e) {
+      console.log("[OCRoleRestrictions] Couldn't extract faction id:", e);
+    }
 
-    if (successChance >= thresholds.good)
-      return { evaluation: "good", influence, lower, upper };
-    if (successChance >= thresholds.ok)
-      return { evaluation: "ok", influence, lower, upper };
-    return { evaluation: "bad", influence, lower, upper };
+    return factionId;
+  }
+
+  function updateFactionRoleRestrictions(factionId, cb) {
+    try {
+      GM_xmlhttpRequest({
+        method: "GET",
+        url: `https://raw.githubusercontent.com/xentac/oc_role_restrictions/refs/heads/main/${factionId}.json`,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        onload: async function (response) {
+          console.log(response);
+          if (response.status != 200) {
+            console.error(
+              "[OCRoleRestrictions] Bad response fetching faction restrictions:",
+              response.status,
+            );
+            return cb();
+          }
+
+          try {
+            const result = JSON.parse(response.responseText);
+            ocRoleInfluence = result;
+          } catch (error) {
+            console.error(
+              "[OCRoleRestrictions] Failed to parse faction restrictions:",
+              error.message,
+            );
+          }
+          return cb();
+        },
+      });
+    } catch (error) {
+      console.error(
+        "[OCRoleRestrictions] Failed fetching faction restrictions:",
+        error.message,
+      );
+    }
   }
 
   function processCrime(wrapper) {
@@ -197,8 +239,8 @@
         : null;
       const evaluation =
         chance !== null
-          ? classifyOcRoleInfluence(crimeTitle, roleName, chance)
-          : { evaluation: "unknown", influence: null, lower: 70 };
+          ? classifyOcRoleInfluence(crimeTitle, roleName)
+          : { influence: null, lower: 70, upper: 80 };
       roles.push({ role: roleName, chance, evaluation });
 
       if (successEl && evaluation.influence !== null) {
@@ -242,7 +284,18 @@
     observer.observe(root, { childList: true, subtree: true });
   }
 
-  waitForKeyElements("#faction-crimes-root", (root) => {
-    setupMutationObserver(root);
-  });
+  const factionId = getFactionId();
+  const cb = () => {
+    waitForKeyElements("#faction-crimes-root", (root) => {
+      setupMutationObserver(root);
+    });
+  };
+  if (factionId) {
+    updateFactionRoleRestrictions(factionId, cb);
+  } else {
+    console.log(
+      "[OCRoleRestrictions] Couldn't find faction id, going with defaults.",
+    );
+    cb();
+  }
 })();
