@@ -195,9 +195,9 @@
       const slotHeader = roleEl.closest("button.slotHeader___K2BS_");
       if (slotHeader) {
         if (chance > evaluation.lower + 10) {
-          slotHeader.style.backgroundColor = "#239b56";
+          //slotHeader.style.backgroundColor = "#ca6f1e";
         } else if (chance > evaluation.lower) {
-          slotHeader.style.backgroundColor = "#ca6f1e";
+          slotHeader.style.backgroundColor = "#239b56";
         } else {
           slotHeader.style.backgroundColor = "#a93226";
         }
