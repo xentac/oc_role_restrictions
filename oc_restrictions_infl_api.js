@@ -1,22 +1,22 @@
 // ==UserScript==
-// @name         Torn OC Role Restrictions
+// @name         Role Restrictions Using API Data
 // @namespace    https://https://github.com/MWTBDLTR/oc_role_restrictions
-// @version      0.4
-// @description  Highlight role restrictions and best roles in OC 2.0 (modified copy of "Torn OC Role Evaluator"). Well paired with https://greasyfork.org/en/scripts/526834-oc-success-chance-2-0.
-// @author       underko[3362751], xentac[3354782], MrChurch[3654415]
+// @version      0.1
+// @description  Role restrictions using API data, forked from xentac[3354782] who forked underko[3362751]. It's a party.
+// @author       MrChurch[3654415]
 // @match        https://www.torn.com/factions.php*
 // @grant        GM_xmlhttpRequest
 // @connect      raw.githubusercontent.com
 // @connect      tornprobability.com
 // @license      MIT
 // ==/UserScript==
-
+// No, it's not commented. No, I don't care.
 (function () {
   "use strict";
 
   const INFLUENCE_API_URL = "https://tornprobability.com:3000/api/GetRoleWeights";
   const INFLUENCE_CACHE_KEY = "ocInfluenceCache:v1";
-  const INFLUENCE_CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12h cache
+  const INFLUENCE_CACHE_TTL_MS = 12 * 60 * 60 * 1000;
 
   let ocRoleInfluence = {};
 
