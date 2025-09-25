@@ -149,7 +149,6 @@
   function classifyOcRoleInfluence(ocName, roleName) {
     const ocInfo = ocRoleInfluence[ocName];
     const roleData = ocInfo?.find((r) => r.role === roleName);
-    const influence = roleData ? roleData.influence : 0;
     const lower = roleData ? roleData.lower : 70;
     let upper = lower + 10;
 
@@ -164,7 +163,7 @@
       upper = roleLowers[1];
     }
 
-    return { influence, lower, upper };
+    return { lower, upper };
   }
 
   function getFactionId() {
@@ -244,10 +243,10 @@
       const evaluation =
         chance !== null
           ? classifyOcRoleInfluence(crimeTitle, roleName)
-          : { influence: null, lower: 70, upper: 80 };
+          : { lower: 70, upper: 80 };
       roles.push({ role: roleName, chance, evaluation });
 
-      if (successEl && evaluation.influence !== null) {
+      if (successEl && evaluation.lower) {
         successEl.textContent = `${chance}/${evaluation.lower}`;
       }
 
