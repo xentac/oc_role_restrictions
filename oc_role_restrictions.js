@@ -88,6 +88,11 @@
       { role: "Picklock", influence: 17.1, lower: 60 },
       { role: "Engineer", influence: 28.21, lower: 62 },
     ],
+    "Guardian Ángels": [
+      { role: "Enforcer", influence: 24.4, lower: 60 },
+      { role: "Hustler", influence: 29.07, lower: 73 },
+      { role: "Engineer", influence: 46.54, lower: 70 },
+    ],
     "Honey Trap": [
       { role: "Enforcer", influence: 20.21, lower: 60 },
       { role: "Muscle #1", influence: 34.32, lower: 70 },
