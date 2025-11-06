@@ -152,15 +152,17 @@
     const lower = roleData ? roleData.lower : 70;
     let upper = lower + 10;
 
-    const roleLowers = ocInfo
-      .map((role) => {
-        return role.lower;
-      })
-      .sort();
+    if (ocInfo) {
+      const roleLowers = ocInfo
+        .map((role) => {
+          return role.lower;
+        })
+        .sort();
 
-    // If our role is a low influence role, set the upper bound to the next highest lower bound if upper doesn't already pass it
-    if (roleLowers[0] == lower && upper < roleLowers[1]) {
-      upper = roleLowers[1];
+      // If our role is a low influence role, set the upper bound to the next highest lower bound if upper doesn't already pass it
+      if (roleLowers[0] == lower && upper < roleLowers[1]) {
+        upper = roleLowers[1];
+      }
     }
 
     return { lower, upper };
