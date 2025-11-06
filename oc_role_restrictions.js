@@ -305,14 +305,14 @@
   }
 
   // Inserting dependency because Torn PDA can't handle @require
-  // ==UserScript==
-  // @version 1.3.0
-  // @name waitForKeyElements.js (CoeJoder fork)
-  // @description A utility function for userscripts that detects and handles AJAXed content.
-  // @namespace https://github.com/CoeJoder/waitForKeyElements.js
-  // @author CoeJoder
-  // @homepage https://github.com/CoeJoder/waitForKeyElements.js
-  // @source https://raw.githubusercontent.com/CoeJoder/waitForKeyElements.js/master/waitForKeyElements.js
+  // -- ==UserScript==
+  // -- @version 1.3.0
+  // -- @name waitForKeyElements.js (CoeJoder fork)
+  // -- @description A utility function for userscripts that detects and handles AJAXed content.
+  // -- @namespace https://github.com/CoeJoder/waitForKeyElements.js
+  // -- @author CoeJoder
+  // -- @homepage https://github.com/CoeJoder/waitForKeyElements.js
+  // -- @source https://raw.githubusercontent.com/CoeJoder/waitForKeyElements.js/master/waitForKeyElements.js
   //
   // ==/UserScript==
 
