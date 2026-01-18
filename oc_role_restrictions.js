@@ -177,9 +177,13 @@
   function getFactionId() {
     let factionId = "";
     try {
-      document
-        .querySelector(".forum-thread")
-        .href.split("#")[1]
+      const ft = document.querySelector(".forum-thread");
+      if (!ft.href) {
+        return null;
+      }
+
+      ft.href
+        .split("#")[1]
         .split("&")
         .forEach((elem) => {
           if (elem[0] == "a") {
